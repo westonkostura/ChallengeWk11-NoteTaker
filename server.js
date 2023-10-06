@@ -1,13 +1,10 @@
 const express = require('express');
-const routes = require('./routes/routes');
-const sequelize = require('./config/connection');
 const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// turn on routes
-app.use(routes);
 
 //routes for public folder
 app.use(express.static('public'));
@@ -26,8 +23,8 @@ function saveNotes(notes) {
 }
 
 async function deleteNote(id, notes) {
-  const notes = await getNotes();
-  const newNotes = notes.filter((note) => note.id !== id);
+  const notes1 = await getNotes();
+  const newNotes = notes1.filter((note) => note.id !== id);
   saveNotes(newNotes);
 }
 
@@ -52,8 +49,20 @@ app.delete('/api/notes/:id', (req, res) => {
   res.json(getNotes());
 });
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
 
-// turn on connection to db and server
-sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log(`Listening on port ${PORT}!`));
+app.get('/notes', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/notes.html'));
+});
+
+app.post('/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/notes.html'));
+    });
+
+
+
+app.listen(PORT, () => {
+  console.log(`API server now on port ${PORT}!`);
 });
