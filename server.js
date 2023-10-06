@@ -1,67 +1,58 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-
 //routes for public folder
-app.use(express.static('public'));
-
+app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// function for getting notes
-async function getNotes() {
-  const notes = await fs.readFileSync('./db/db.json', 'utf8');
-  return JSON.parse(notes);
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/index.html"));
+});
+
+app.get("/notes", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/notes.html"));
+});
+
+app.get("/api/notes", (req, res) => {
+  res.sendFile(path.join(__dirname, "./db/db.json"));
+});
+
+//function to create note
+function createNewNote(body, notesArray) {
+  const note = body;
+  notesArray.push(note);
+  fs.writeFileSync(
+    path.join(__dirname, "./db/db.json"),
+    JSON.stringify({ notes: notesArray }, null, 2)
+  );
+  return note;
 }
 
-function saveNotes(notes) {
-  fs.writeFileSync('./db/db.json', JSON.stringify(notes));
+//function to delete note
+function deleteNote(id, notesArray) {
+  const note = notesArray.filter((note) => note.id !== id);
+  fs.writeFileSync(
+    path.join(__dirname, "./db/db.json"),
+    JSON.stringify({ notes: note }, null, 2)
+  );
+  return note;
 }
 
-async function deleteNote(id, notes) {
-  const notes1 = await getNotes();
-  const newNotes = notes1.filter((note) => note.id !== id);
-  saveNotes(newNotes);
-}
-
-//Post route for notes api
-app.post('/api/notes', (req, res) => {
-  const newNote = req.body;
-  newNote.id = uuid.v4();
-  const notes = getNotes();
-  notes.push(newNote);
-  saveNotes(notes);
-  res.json(newNote);
+app.delete("/api/notes/:id", (req, res) => {
+  const note = deleteNote(req.params.id, notes);
+  res.json(note);
 });
 
-// GET Route for notes api
-app.get('/api/notes', (req, res) => {
-  res.json(getNotes());
+app.post("/api/notes", (req, res) => {
+  req.body.id = notes.length.toString();
+  const note = createNewNote(req.body, notes);
+  res.json(note);
 });
-
-//delete route for notes api
-app.delete('/api/notes/:id', (req, res) => {
-  deleteNote();
-  res.json(getNotes());
-});
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
-app.get('/notes', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/notes.html'));
-});
-
-app.post('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/notes.html'));
-    });
-
-
 
 app.listen(PORT, () => {
   console.log(`API server now on port ${PORT}!`);
