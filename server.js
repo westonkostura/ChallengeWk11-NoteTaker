@@ -25,6 +25,12 @@ function saveNotes(notes) {
   fs.writeFileSync('./db/db.json', JSON.stringify(notes));
 }
 
+async function deleteNote(id, notes) {
+  const notes = await getNotes();
+  const newNotes = notes.filter((note) => note.id !== id);
+  saveNotes(newNotes);
+}
+
 //Post route for notes api
 app.post('/api/notes', (req, res) => {
   const newNote = req.body;
@@ -37,6 +43,12 @@ app.post('/api/notes', (req, res) => {
 
 // GET Route for notes api
 app.get('/api/notes', (req, res) => {
+  res.json(getNotes());
+});
+
+//delete route for notes api
+app.delete('/api/notes/:id', (req, res) => {
+  deleteNote();
   res.json(getNotes());
 });
 
