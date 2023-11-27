@@ -15,8 +15,10 @@ This application is a tool for users to write and save notes. It allows users to
 Steps to install application:
 1. Clone repository.
 2. Install dependencies with npm install.
+
 ```npm install```
 3. Run the application with node server.js.
+
 ```node server.js```
 
 ## Usage
