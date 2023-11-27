@@ -17,6 +17,7 @@ Steps to install application:
 2. Install dependencies with npm install.
 
 ```npm install```
+
 3. Run the application with node server.js.
 
 ```node server.js```
