@@ -3,16 +3,12 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3003;
 
 //routes for public folder
 app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.get("/api/notes", (req, res) => {
-  res.sendFile(path.join(__dirname, "./db/db.json"));
-});
 
 //function to create note
 function createNewNote(body, notesArray) {
@@ -34,6 +30,14 @@ function deleteNote(id, notesArray) {
   );
   return note;
 }
+
+app.get("/api/notes", (req, res) => {
+  fs.readFile("./db/db.json", "utf8", (err, data) => {
+    if (err) throw err;
+    const notes = JSON.parse(data);
+    res.json(notes);
+  });
+});
 
 app.delete("/api/notes/:id", (req, res) => {
   const note = deleteNote(req.params.id, notes);
