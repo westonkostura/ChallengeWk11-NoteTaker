@@ -22,7 +22,7 @@ Steps to install application:
 
 ```node server.js```
 
-4. Open http://localhost:{PORT} in your browser.
+4. Open http://localhost:3003 in your browser.
 
 ## Usage
 Writing a note:
