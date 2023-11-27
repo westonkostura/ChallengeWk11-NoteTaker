@@ -22,6 +22,8 @@ Steps to install application:
 
 ```node server.js```
 
+4. Open http://localhost:{PORT} in your browser.
+
 ## Usage
 Writing a note:
 ![Alt text](<public/assets/pictures/Screenshot 2023-11-27 at 3.55.29 PM.png>)
